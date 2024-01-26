@@ -81,6 +81,12 @@ dev.off()
 
 top_list <- list()
 
+if (length(reductions)>=4) {
+  ncol=4
+} else {
+  ncol= length(reductions)
+}
+
 for (i in seq_along(reductions)) {
   if(reductions[i]=='UMAP'){ 
     pbmc_2 <- pbmc
@@ -99,7 +105,7 @@ for (i in seq_along(reductions)) {
 
 pdf('all_scaled.pdf',height = 6, width = 12)
 print(
-  top_spatial_plots <- wrap_plots(top_list, ncol = 4) 
+  top_spatial_plots <- wrap_plots(top_list, ncol = ncol) 
   
 )
 dev.off()
@@ -125,7 +131,7 @@ for (i in seq_along(reductions)) {
 
 pdf('all_Notscaled.pdf',height = 6, width = 15)
 print(
-  top_spatial_plots <- wrap_plots(top_list, ncol = 4) 
+  top_spatial_plots <- wrap_plots(top_list, ncol = ncol) 
   
 )
 dev.off()

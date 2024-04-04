@@ -93,6 +93,8 @@ RUN apt-get update -y && \
         libpoppler-cpp-dev 
 
 RUN R -e "install.packages(c('pdftools'),repos = 'http://cran.us.r-project.org')"
+RUN apt-get update -y && apt-get -y install libglpk-dev
+RUN R -e "install.packages(c('Seurat'), repos = 'http://cran.us.r-project.org')"
 
 
 # STOP HERE:

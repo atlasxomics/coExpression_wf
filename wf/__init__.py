@@ -15,14 +15,24 @@ from enum import Enum
 from typing import List
 from latch import large_task
 
+class Chip(Enum):
+    typeI = '50X50'
+    typeII = '96X96'
 
 @large_task
-def runModule(output_dir: LatchDir= 'latch://13502.account/analysis_data',project: str="name_of_project",archrObj: LatchDir= 'latch://13502.account/ArchRProjects/Rai_2_Conditions_w_shiny',geneList: LatchFile="latch://13502.account/noori_sample_fqs/geneList.csv") -> LatchDir:
+def runModule(
+              chip: Chip,
+              output_dir: LatchDir= 'latch://13502.account/analysis_data',
+              project: str="name_of_project",
+              archrObj: LatchDir= 'latch://13502.account/ArchRProjects/Rai_2_Conditions_w_shiny',
+              geneList: LatchFile="latch://13502.account/noori_sample_fqs/geneList.csv"
+              ) -> LatchDir:
 
     subprocess.run(
         [
             "Rscript",
             "/root/wf/runModuleScore.R",
+            chip.value,
             archrObj.local_path,
             project,
             geneList.local_path
@@ -39,7 +49,13 @@ def runModule(output_dir: LatchDir= 'latch://13502.account/analysis_data',projec
 
 
 @workflow
-def coExpression_wf(output_dir: LatchDir='latch://13502.account/analysis_data',project: str="name_of_project", archrObj: LatchDir= LatchDir('latch://13502.account/ArchRProjects/Rai_2_Conditions_w_shiny'),geneList: LatchFile="latch://13502.account/noori_sample_fqs/geneList.csv") -> LatchDir:
+def coExpression_wf(
+                    chip: Chip,
+                    output_dir: LatchDir='latch://13502.account/analysis_data',
+                    project: str="name_of_project",
+                    archrObj: LatchDir= LatchDir('latch://13502.account/ArchRProjects/Rai_2_Conditions_w_shiny'),
+                    geneList: LatchFile="latch://13502.account/noori_sample_fqs/geneList.csv"
+                    ) -> LatchDir:
     """is a full-featured software suite for the analysis of single-cell chromatin accessibility data.
 
     coExpression
@@ -54,11 +70,17 @@ def coExpression_wf(output_dir: LatchDir='latch://13502.account/analysis_data',p
             name: Noori
             email: noorisotude@gmail.com
             github: https://github.com/atlasxomics/coExpression_wf
-        repository:
+        repository: https://github.com/atlasxomics/coExpression_wf
         license:
             id: MIT
 
     Args:
+
+        chip:
+          what size is chip that used.
+          __metadata__:
+            display_name: Chip size
+
 
         archrObj:
           Select the folder that produced by create ArchRProject. This folder must be included in combined.rds file.
@@ -67,11 +89,11 @@ def coExpression_wf(output_dir: LatchDir='latch://13502.account/analysis_data',p
             display_name: create ArchRProject dir
 
         project:
-          specify a name for the output folder.
+          specify a name for the output folder.chip:
+          what size is chip that used.
 
           __metadata__:
             display_name: Project Name
-
 
         geneList:
           insert gene names list csv file.
@@ -84,8 +106,15 @@ def coExpression_wf(output_dir: LatchDir='latch://13502.account/analysis_data',p
 
           __metadata__:
             display_name: Output Directory
+        
+
     """
-    return runModule(archrObj=archrObj,output_dir=output_dir,project=project,geneList=geneList)
+    return runModule(
+                     chip=chip,
+                     archrObj=archrObj,
+                     output_dir=output_dir,
+                     project=project,
+                     geneList=geneList)
 
 
 

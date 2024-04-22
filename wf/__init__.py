@@ -1,6 +1,7 @@
 """Latch wrapper of ArchR plotEmbedding function.
 """
 
+import glob
 import subprocess
 
 from enum import Enum
@@ -35,7 +36,7 @@ def runModule(
         ]
     )
 
-    local_output_dir = str(Path("/root/").resolve())
+    local_output_dir = str(Path(glob.glob("*results")[0]).resolve())
 
     remote_path = output_dir.remote_path
     if remote_path[-1] != "/":
@@ -119,7 +120,7 @@ if __name__ == "__main__":
     runModule(
         chip=Chip.typeII,
         output_dir='latch://13502.account/analysis_data',
-        project="jm_dev",
+        project="jm_dev_fix",
         archrObj='latch://13502.account/ArchRProjects/Kelsen',
         geneList="latch://13502.account/gene_lists/Natrajan/T_cells_vector.csv"
     )

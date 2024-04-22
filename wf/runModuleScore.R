@@ -157,5 +157,4 @@ file.remove(
 #===============================================================================
 
 setwd("/root")
-system("ls -a | grep -v 'results' | xargs rm -r")
 file.rename(list.files(pattern = "results"), paste0(project, "_results"))

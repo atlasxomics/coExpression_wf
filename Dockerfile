@@ -1,4 +1,4 @@
-FROM 812206152185.dkr.ecr.us-west-2.amazonaws.com/latch-base:dd8f-main
+FROM 812206152185.dkr.ecr.us-west-2.amazonaws.com/latch-base:fe0b-main
 RUN apt-get update -y
 RUN apt-get install -y gdebi-core 
 RUN apt install -y aptitude
@@ -17,14 +17,17 @@ RUN apt-get update -y && \
         libatlas-base-dev \
         libbz2-dev \        
         libcurl4-openssl-dev \
+        libfftw3-dev \
         libfontconfig1-dev \
         libfreetype6-dev \
         libgit2-dev \
+        libglpk-dev \
         libgsl-dev \
         libicu-dev \
         liblzma-dev \
         libpango-1.0-0 \
         libpangocairo-1.0-0 \
+        libpoppler-cpp-dev \
         libpcre3-dev \
         libssl-dev \
         libtcl8.6 \
@@ -50,30 +53,6 @@ RUN echo "TZ=$( cat /etc/timezone )" >> /etc/R/Renviron.site
 
 # Install devtools, cairo (https://stackoverflow.com/questions/20923209)
 RUN apt-get install -y r-cran-devtools libcairo2-dev
-# libglpk-dev
-
-# Install packages
-RUN R -e "install.packages(c('BiocManager', \
-    'Cairo', \
-    'Matrix', \
-    'shiny', \
-    'shinyhelper', \
-    'data.table', \
-    'Matrix', \
-    'DT', \
-    'magrittr', \
-    'ggplot2', \
-    'ggrepel', \
-    'hdf5r', \
-    'ggdendro', \
-    'gridExtra', \
-    'ggseqlogo', \
-    'circlize', \
-    'tidyverse', \
-    'qdap'))"
-
-RUN R -e "devtools::install_github('SGDDNB/ShinyCell')"
-RUN R -e "BiocManager::install('ComplexHeatmap')"
 
 # Upgrade R to version 4.3.0
 RUN wget https://cran.r-project.org/src/base/R-4/R-4.3.0.tar.gz
@@ -83,38 +62,15 @@ RUN cd R-4.3.0 && make && make install
 RUN apt-get update -y && apt-get install -y default-jdk
 RUN R CMD javareconf
 
-RUN R -e "install.packages(c('pkgconfig', \
-    'munsell', \
-    'zip', \
-    'zoo', \
-    'xtable', \
-    'listenv', \
-    'lazyeval', \
-    'bit64', \
-    'rJava', \
-    'labeling'), \
-    repos = 'http://cran.us.r-project.org')"
+# Installation of R packages with renv
+RUN R -e "install.packages('https://cran.r-project.org/src/contrib/renv_1.0.7.tar.gz', repos = NULL, type = 'source')"
+COPY renv.lock /root/renv.lock
+COPY .Rprofile /root/.Rprofile
+RUN mkdir /root/renv
+COPY renv/activate.R /root/renv/activate.R
+COPY renv/settings.json /root/renv/settings.json
+RUN R -e "options(repos = c(CRAN = 'https://cloud.r-project.org')); renv::restore()"
 
-RUN apt-get update -y && apt-get install -y libpoppler-cpp-dev 
-RUN R -e "install.packages(c('pdftools') ,repos = 'http://cran.us.r-project.org')"
-RUN R -e "install.packages(c('patchwork') ,repos = 'http://cran.us.r-project.org')"
-RUN R -e "install.packages(c('bitops') ,repos = 'http://cran.us.r-project.org')"
-RUN R -e "install.packages(c('XML') ,repos = 'http://cran.us.r-project.org')"
-RUN R -e "install.packages(c('generics') ,repos = 'http://cran.us.r-project.org')"
-
-RUN R -e 'install.packages("miniUI", dependencies = TRUE, repos = "http://cran.us.r-project.org")'
-RUN R -e 'install.packages("mime", dependencies = TRUE, repos = "http://cran.us.r-project.org")'
-RUN R -e 'install.packages("httpuv", dependencies = TRUE, repos = "http://cran.us.r-project.org")'
-RUN R -e 'BiocManager::install(version = "3.18", ask = FALSE)'
-RUN R -e 'BiocManager::install("multtest", update = TRUE)'
-RUN R -e 'install.packages("mutoss", dependencies = TRUE, repos = "http://cran.us.r-project.org")'
-RUN R -e 'install.packages("distrEx", dependencies = TRUE, repos = "http://cran.us.r-project.org")'
-RUN apt-get install libfftw3-dev -y
-RUN R -e 'install.packages("qqconf", dependencies = TRUE, repos = "http://cran.us.r-project.org")'
-RUN R -e 'install.packages("metap", dependencies = TRUE, repos = "http://cran.us.r-project.org")'
-
-RUN R -e 'install.packages("qdap", dependencies = TRUE, repos = "http://cran.us.r-project.org")'
-RUN R -e 'install.packages("Seurat", dependencies = TRUE, repos = "http://cran.us.r-project.org")'
 RUN python3 -m pip install numpy==1.26.2
 RUN python3 -m pip install macs2==2.2.6
 

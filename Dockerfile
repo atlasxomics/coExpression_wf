@@ -46,74 +46,86 @@ RUN apt-get update -y && \
         r-cran-rjava        
 
 RUN echo "alias ll='ls -l --color=auto'" >> .bashrc
-#RUN echo "export TZ='America/New_York'" >> .bashrc
-#RUN echo "export TZ='America/New_York'" >> /usr/lib/R/etc/Renviron
-#RUN echo "export TZ='America/New_York'" >> /etc/R/Renviron
-# Fix systemd conflict with timedatectl
 RUN echo "TZ=$( cat /etc/timezone )" >> /etc/R/Renviron.site
 
-
-
-# Have to install devtools like this; see https://stackoverflow.com/questions/20923209, also cairo
+# Install devtools, cairo (https://stackoverflow.com/questions/20923209)
 RUN apt-get install -y r-cran-devtools libcairo2-dev
+# libglpk-dev
 
 # Install packages
-RUN R -e "install.packages(c('Cairo', 'BiocManager', 'Matrix', 'Seurat','shiny', 'shinyhelper', 'data.table', 'Matrix', 'DT', 'magrittr','ggplot2','ggrepel','hdf5r','ggdendro','gridExtra', 'ggseqlogo', 'circlize','tidyverse','qdap'))"
-RUN R -e "devtools::install_github('immunogenomics/harmony')"
-RUN R -e "devtools::install_github('GreenleafLab/ArchR', ref='master', repos = BiocManager::repositories())"
-RUN R -e "devtools::install_github('GreenleafLab/chromVARmotifs')"
-RUN R -e "library('ArchR'); ArchR::installExtraPackages()"
+RUN R -e "install.packages(c('BiocManager', \
+    'Cairo', \
+    'Matrix', \
+    'shiny', \
+    'shinyhelper', \
+    'data.table', \
+    'Matrix', \
+    'DT', \
+    'magrittr', \
+    'ggplot2', \
+    'ggrepel', \
+    'hdf5r', \
+    'ggdendro', \
+    'gridExtra', \
+    'ggseqlogo', \
+    'circlize', \
+    'tidyverse', \
+    'qdap'))"
 
-RUN R -e "BiocManager::install('BSgenome.Mmusculus.UCSC.mm10')"
-RUN R -e "BiocManager::install('BSgenome.Hsapiens.UCSC.hg38')"
 RUN R -e "devtools::install_github('SGDDNB/ShinyCell')"
 RUN R -e "BiocManager::install('ComplexHeatmap')"
 
-
 # Upgrade R to version 4.3.0
-
 RUN wget https://cran.r-project.org/src/base/R-4/R-4.3.0.tar.gz
 RUN tar zxvf R-4.3.0.tar.gz
 RUN cd R-4.3.0 && ./configure --enable-R-shlib
 RUN cd R-4.3.0 && make && make install
-RUN apt install -y default-jdk
+RUN apt-get update -y && apt-get install -y default-jdk
 RUN R CMD javareconf
 
-RUN R -e "install.packages(c('pkgconfig','munsell','zip','zoo','xtable','listenv','lazyeval','bit64','rJava','labeling'),repos = 'http://cran.us.r-project.org')"
+RUN R -e "install.packages(c('pkgconfig', \
+    'munsell', \
+    'zip', \
+    'zoo', \
+    'xtable', \
+    'listenv', \
+    'lazyeval', \
+    'bit64', \
+    'rJava', \
+    'labeling'), \
+    repos = 'http://cran.us.r-project.org')"
 
-RUN R -e "ArchR::installExtraPackages()"
+RUN apt-get update -y && apt-get install -y libpoppler-cpp-dev 
+RUN R -e "install.packages(c('pdftools') ,repos = 'http://cran.us.r-project.org')"
+RUN R -e "install.packages(c('patchwork') ,repos = 'http://cran.us.r-project.org')"
+RUN R -e "install.packages(c('bitops') ,repos = 'http://cran.us.r-project.org')"
+RUN R -e "install.packages(c('XML') ,repos = 'http://cran.us.r-project.org')"
+RUN R -e "install.packages(c('generics') ,repos = 'http://cran.us.r-project.org')"
 
-RUN R -e "BiocManager::install(version = '3.17',ask = FALSE)"
-RUN R -e "BiocManager::install('BSgenome.Hsapiens.UCSC.hg38',ask = FALSE)"
-RUN R -e "BiocManager::install('BSgenome.Mmusculus.UCSC.mm10',ask = FALSE)"
+RUN R -e 'install.packages("miniUI", dependencies = TRUE, repos = "http://cran.us.r-project.org")'
+RUN R -e 'install.packages("mime", dependencies = TRUE, repos = "http://cran.us.r-project.org")'
+RUN R -e 'install.packages("httpuv", dependencies = TRUE, repos = "http://cran.us.r-project.org")'
+RUN R -e 'BiocManager::install(version = "3.18", ask = FALSE)'
+RUN R -e 'BiocManager::install("multtest", update = TRUE)'
+RUN R -e 'install.packages("mutoss", dependencies = TRUE, repos = "http://cran.us.r-project.org")'
+RUN R -e 'install.packages("distrEx", dependencies = TRUE, repos = "http://cran.us.r-project.org")'
+RUN apt-get install libfftw3-dev -y
+RUN R -e 'install.packages("qqconf", dependencies = TRUE, repos = "http://cran.us.r-project.org")'
+RUN R -e 'install.packages("metap", dependencies = TRUE, repos = "http://cran.us.r-project.org")'
 
-
-RUN apt-get update -y && \
-    apt-get install -y \
-        libpoppler-cpp-dev 
-
-RUN R -e "install.packages(c('pdftools'),repos = 'http://cran.us.r-project.org')"
-RUN apt-get update -y && apt-get -y install libglpk-dev
-RUN R -e "install.packages(c('Seurat'), repos = 'http://cran.us.r-project.org')"
-
+RUN R -e 'install.packages("qdap", dependencies = TRUE, repos = "http://cran.us.r-project.org")'
+RUN R -e 'install.packages("Seurat", dependencies = TRUE, repos = "http://cran.us.r-project.org")'
+RUN python3 -m pip install numpy==1.26.2
+RUN python3 -m pip install macs2==2.2.6
 
 # STOP HERE:
 # The following lines are needed to ensure your build environement works
 # correctly with latch.
 RUN python3 -m pip install --upgrade latch
-# RUN python3 -m pip install  latch==2.29.0
-# RUN python3 -m pip install macs2==2.2.6
-RUN python3 -m pip install macs2
-run pip install latch==2.36.3
-run mkdir /opt/latch
-
-# Copy workflow data (use .dockerignore to skip files)
-copy . .latch/* /root/
-
+COPY wf /root/wf
+RUN mkdir /opt/latch
 # Latch workflow registration metadata
 # DO NOT CHANGE
-arg tag
-# DO NOT CHANGE
-env FLYTE_INTERNAL_IMAGE $tag
-
-workdir /root
+ARG tag
+ENV FLYTE_INTERNAL_IMAGE $tag
+WORKDIR /root

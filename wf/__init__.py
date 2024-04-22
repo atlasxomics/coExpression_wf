@@ -1,32 +1,28 @@
+"""Latch wrapper of ArchR plotEmbedding function.
 """
-Latch wrapper of ArchR plotEmbedding function.
-"""
-
 
 import subprocess
+
+from enum import Enum
+from flytekit import workflow
+from latch import large_task
+from latch.types import LatchDir, LatchFile
 from pathlib import Path
 
-from flytekit import LaunchPlan, task, workflow
-from latch.types import LatchDir
-from latch.types import LatchFile
-from dataclasses import dataclass
-from dataclasses_json import dataclass_json
-from enum import Enum
-from typing import List
-from latch import large_task
 
 class Chip(Enum):
     typeI = '50X50'
     typeII = '96X96'
 
+
 @large_task
 def runModule(
-              chip: Chip,
-              output_dir: LatchDir= 'latch://13502.account/analysis_data',
-              project: str="name_of_project",
-              archrObj: LatchDir= 'latch://13502.account/ArchRProjects/Rai_2_Conditions_w_shiny',
-              geneList: LatchFile="latch://13502.account/noori_sample_fqs/geneList.csv"
-              ) -> LatchDir:
+    chip: Chip,
+    output_dir: LatchDir = 'latch://13502.account/analysis_data',
+    project: str = "name_of_project",
+    archrObj: LatchDir = 'latch://13502.account/ArchRProjects/Rai_2_Conditions_w_shiny',
+    geneList: LatchFile = "latch://13502.account/noori_sample_fqs/geneList.csv"
+) -> LatchDir:
 
     subprocess.run(
         [
@@ -39,30 +35,30 @@ def runModule(
         ]
     )
 
-    local_output_dir = str(Path(f"/root/").resolve())
+    local_output_dir = str(Path("/root/").resolve())
 
-    remote_path=output_dir.remote_path
+    remote_path = output_dir.remote_path
     if remote_path[-1] != "/":
         remote_path += "/"
 
-    return LatchDir(local_output_dir,remote_path)
+    return LatchDir(local_output_dir, remote_path)
 
 
 @workflow
 def coExpression_wf(
-                    chip: Chip,
-                    output_dir: LatchDir='latch://13502.account/analysis_data',
-                    project: str="name_of_project",
-                    archrObj: LatchDir= LatchDir('latch://13502.account/ArchRProjects/Rai_2_Conditions_w_shiny'),
-                    geneList: LatchFile="latch://13502.account/noori_sample_fqs/geneList.csv"
-                    ) -> LatchDir:
-    """is a full-featured software suite for the analysis of single-cell chromatin accessibility data.
+    chip: Chip,
+    output_dir: LatchDir = 'latch://13502.account/analysis_data',
+    project: str = "name_of_project",
+    archrObj: LatchDir = LatchDir('latch://13502.account/ArchRProjects/Rai_2_Conditions_w_shiny'),
+    geneList: LatchFile = "latch://13502.account/noori_sample_fqs/geneList.csv"
+) -> LatchDir:
+    """
 
     coExpression
     ----
 
-    `coExpression` is a full-featured application for projection of gene set group in Dimension Reduction plots.
-
+    `coExpression` is an application for projection of gene set group in
+    Dimension Reduction plots.
 
     __metadata__:
         display_name: coExpression
@@ -81,9 +77,9 @@ def coExpression_wf(
           __metadata__:
             display_name: Chip size
 
-
         archrObj:
-          Select the folder that produced by create ArchRProject. This folder must be included in combined.rds file.
+          Select the folder that produced by create ArchRProject. This folder
+          must be included in combined.rds file.
 
           __metadata__:
             display_name: create ArchRProject dir
@@ -106,15 +102,24 @@ def coExpression_wf(
 
           __metadata__:
             display_name: Output Directory
-        
 
     """
+
     return runModule(
-                     chip=chip,
-                     archrObj=archrObj,
-                     output_dir=output_dir,
-                     project=project,
-                     geneList=geneList)
+        chip=chip,
+        archrObj=archrObj,
+        output_dir=output_dir,
+        project=project,
+        geneList=geneList
+    )
 
 
+if __name__ == "__main__":
 
+    runModule(
+        chip=Chip.typeII,
+        output_dir='latch://13502.account/analysis_data',
+        project="jm_dev",
+        archrObj='latch://13502.account/ArchRProjects/Kelsen',
+        geneList="latch://13502.account/gene_lists/Natrajan/T_cells_vector.csv"
+    )

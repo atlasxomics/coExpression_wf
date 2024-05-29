@@ -12,17 +12,17 @@ from pathlib import Path
 
 
 class Chip(Enum):
-    typeI = '50X50'
-    typeII = '96X96'
+    typeI = "50X50"
+    typeII = "96X96"
 
 
 @large_task
 def runModule(
     chip: Chip,
-    output_dir: LatchDir = 'latch://13502.account/analysis_data',
-    project: str = "name_of_project",
-    archrObj: LatchDir = 'latch://13502.account/ArchRProjects/Rai_2_Conditions_w_shiny',
-    geneList: LatchFile = "latch://13502.account/noori_sample_fqs/geneList.csv"
+    output_dir: LatchDir,
+    project: str,
+    archrObj: LatchDir,
+    geneList: LatchFile
 ) -> LatchDir:
 
     subprocess.run(
@@ -48,10 +48,12 @@ def runModule(
 @workflow
 def coExpression_wf(
     chip: Chip,
-    output_dir: LatchDir = 'latch://13502.account/analysis_data',
-    project: str = "name_of_project",
-    archrObj: LatchDir = LatchDir('latch://13502.account/ArchRProjects/Rai_2_Conditions_w_shiny'),
-    geneList: LatchFile = "latch://13502.account/noori_sample_fqs/geneList.csv"
+    output_dir: LatchDir = "latch://13502.account/analysis_data",
+    project: str = "Name of project",
+    archrObj: LatchDir = LatchDir(
+        "latch://13502.account/ArchRProjects/coExpression_demo"
+    ),
+    geneList: LatchFile = "latch://13502.account/sample_fqs/geneList.csv"
 ) -> LatchDir:
     """
 
@@ -119,8 +121,8 @@ if __name__ == "__main__":
 
     runModule(
         chip=Chip.typeII,
-        output_dir='latch://13502.account/analysis_data',
+        output_dir="latch://13502.account/analysis_data",
         project="jm_dev_fix",
-        archrObj='latch://13502.account/ArchRProjects/Kelsen',
+        archrObj="latch://13502.account/ArchRProjects/Kelsen",
         geneList="latch://13502.account/gene_lists/Natrajan/T_cells_vector.csv"
     )

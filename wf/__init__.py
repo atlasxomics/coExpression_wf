@@ -48,10 +48,10 @@ def runModule(
 @workflow
 def coExpression_wf(
     chip: Chip,
-    output_dir: LatchDir = "latch://13502.account/analysis_data",
-    project: str = "Name of project",
+    output_dir: LatchDir = "latch:///analysis_data/coExpression_demo",
+    project: str = "demo",
     archrObj: LatchDir = LatchDir(
-        "latch://13502.account/ArchRProjects/coExpression_demo"
+        "latch:///ArchRProjects/coExpression_demo"
     ),
     geneList: LatchFile = "latch://13502.account/sample_fqs/geneList.csv"
 ) -> LatchDir:
@@ -64,7 +64,7 @@ def coExpression_wf(
     Dimension Reduction plots.
 
     __metadata__:
-        display_name: coExpression
+        display_name: module score
         author:
             name: Noori
             email: noorisotude@gmail.com

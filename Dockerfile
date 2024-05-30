@@ -74,6 +74,10 @@ RUN R -e "options(repos = c(CRAN = 'https://cloud.r-project.org')); renv::restor
 RUN python3 -m pip install numpy==1.26.2
 RUN python3 -m pip install macs2==2.2.6
 
+# Copy files for .renvignore
+COPY coExpression_wf.Rproj /root/coExpression_wf.Rproj
+COPY .renvignore /root/.renvignore
+
 # STOP HERE:
 # The following lines are needed to ensure your build environement works
 # correctly with latch.

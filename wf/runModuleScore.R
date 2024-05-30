@@ -78,7 +78,8 @@ for (reduction in reductions) {
   ) +
     scale_colour_gradientn(
       colours = rev(brewer.pal(n = 11, name = "RdBu")),
-      limits = c(scale_min, scale_max)) +
+      limits = c(scale_min, scale_max)
+    ) +
     ggtitle(reduction)
 
   pdf(paste0(reduction, "_ModuleScore.pdf"))
@@ -111,7 +112,8 @@ for (i in seq_along(reductions)) {
   ) +
     scale_colour_gradientn(
       colours = rev(brewer.pal(n = 11, name = "RdBu")),
-      limits = c(scale_min, scale_max)) +
+      limits = c(scale_min, scale_max)
+    ) +
     ggtitle(reductions[i]) & eval(parse(text = axes))
 }
 

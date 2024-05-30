@@ -12,17 +12,17 @@ from pathlib import Path
 
 
 class Chip(Enum):
-    typeI = '50X50'
-    typeII = '96X96'
+    typeI = "50X50"
+    typeII = "96X96"
 
 
 @large_task
 def runModule(
     chip: Chip,
-    output_dir: LatchDir = 'latch://13502.account/analysis_data',
-    project: str = "name_of_project",
-    archrObj: LatchDir = 'latch://13502.account/ArchRProjects/Rai_2_Conditions_w_shiny',
-    geneList: LatchFile = "latch://13502.account/noori_sample_fqs/geneList.csv"
+    output_dir: LatchDir,
+    project: str,
+    archrObj: LatchDir,
+    geneList: LatchFile
 ) -> LatchDir:
 
     subprocess.run(
@@ -48,21 +48,23 @@ def runModule(
 @workflow
 def coExpression_wf(
     chip: Chip,
-    output_dir: LatchDir = 'latch://13502.account/analysis_data',
-    project: str = "name_of_project",
-    archrObj: LatchDir = LatchDir('latch://13502.account/ArchRProjects/Rai_2_Conditions_w_shiny'),
-    geneList: LatchFile = "latch://13502.account/noori_sample_fqs/geneList.csv"
+    output_dir: LatchDir = "latch:///analysis_data/module-score_demo",
+    project: str = "demo",
+    archrObj: LatchDir = LatchDir(
+        "latch:///ArchRProjects/module-score_demo"
+    ),
+    geneList: LatchFile = "latch://13502.account/sample_fqs/geneList.csv"
 ) -> LatchDir:
     """
 
-    coExpression
+    module score
     ----
 
-    `coExpression` is an application for projection of gene set group in
+    **module score** is an application for projection of gene set group in
     Dimension Reduction plots.
 
     __metadata__:
-        display_name: coExpression
+        display_name: module score
         author:
             name: Noori
             email: noorisotude@gmail.com
@@ -74,7 +76,7 @@ def coExpression_wf(
     Args:
 
         chip:
-          what size is chip that used.
+          What size is chip that used?
           __metadata__:
             display_name: Chip size
 
@@ -86,20 +88,19 @@ def coExpression_wf(
             display_name: create ArchRProject dir
 
         project:
-          specify a name for the output folder.chip:
-          what size is chip that used.
+          Specify a name for the output folder.
 
           __metadata__:
             display_name: Project Name
 
         geneList:
-          insert gene names list csv file.
+          Gene names listed in a csv.
 
           __metadata__:
-            display_name: Gene List CSV File
+            display_name: Gene List CSV
 
         output_dir:
-          Where to save the plots?.
+          Latch file path to save outputs
 
           __metadata__:
             display_name: Output Directory
@@ -119,8 +120,8 @@ if __name__ == "__main__":
 
     runModule(
         chip=Chip.typeII,
-        output_dir='latch://13502.account/analysis_data',
+        output_dir="latch://13502.account/analysis_data",
         project="jm_dev_fix",
-        archrObj='latch://13502.account/ArchRProjects/Kelsen',
+        archrObj="latch://13502.account/ArchRProjects/Kelsen",
         geneList="latch://13502.account/gene_lists/Natrajan/T_cells_vector.csv"
     )

@@ -48,19 +48,19 @@ def runModule(
 @workflow
 def coExpression_wf(
     chip: Chip,
-    output_dir: LatchDir = "latch:///analysis_data/coExpression_demo",
+    output_dir: LatchDir = "latch:///analysis_data/module-score_demo",
     project: str = "demo",
     archrObj: LatchDir = LatchDir(
-        "latch:///ArchRProjects/coExpression_demo"
+        "latch:///ArchRProjects/module-score_demo"
     ),
     geneList: LatchFile = "latch://13502.account/sample_fqs/geneList.csv"
 ) -> LatchDir:
     """
 
-    coExpression
+    module score
     ----
 
-    `coExpression` is an application for projection of gene set group in
+    **module score** is an application for projection of gene set group in
     Dimension Reduction plots.
 
     __metadata__:
@@ -76,7 +76,7 @@ def coExpression_wf(
     Args:
 
         chip:
-          what size is chip that used.
+          What size is chip that used?
           __metadata__:
             display_name: Chip size
 
@@ -88,20 +88,19 @@ def coExpression_wf(
             display_name: create ArchRProject dir
 
         project:
-          specify a name for the output folder.chip:
-          what size is chip that used.
+          Specify a name for the output folder.
 
           __metadata__:
             display_name: Project Name
 
         geneList:
-          insert gene names list csv file.
+          Gene names listed in a csv.
 
           __metadata__:
-            display_name: Gene List CSV File
+            display_name: Gene List CSV
 
         output_dir:
-          Where to save the plots?.
+          Latch file path to save outputs
 
           __metadata__:
             display_name: Output Directory

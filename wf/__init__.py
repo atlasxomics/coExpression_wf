@@ -14,6 +14,7 @@ from pathlib import Path
 class Chip(Enum):
     typeI = "50X50"
     typeII = "96X96"
+    typeIII = "220x220"
 
 
 @large_task
@@ -36,7 +37,7 @@ def runModule(
         ]
     )
 
-    local_output_dir = str(Path(glob.glob("*results")[0]).resolve())
+    local_output_dir = Path(glob.glob("*results")[0]).resolve()
 
     remote_path = output_dir.remote_path
     if remote_path[-1] != "/":

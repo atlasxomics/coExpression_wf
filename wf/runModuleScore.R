@@ -33,14 +33,10 @@ combined
 reductions <- names(combined@reductions)
 all_genes <- rownames(combined)
 
-if (chip == "50X50") {
-  pt.size <- 2.0
-} else {
-  pt.size <- 1.0
-}
+pt_sizes <- list("50x50" = 2.0, "96x96" = 1.0, "220x220" = 0.5)
 
-print(chip)
-print(pt.size)
+print(paste("Chip selected:", chip))
+print(paste("Figure point size:", pt_sizes[[chip]]))
 
 inp_genes <- read.csv(args[4], header = FALSE)$V1
 
@@ -74,7 +70,7 @@ for (reduction in reductions) {
     features = c("signature1"),
     label = FALSE,
     repel = TRUE,
-    pt.size = pt.size
+    pt.size = pt_sizes[[chip]]
   ) +
     scale_colour_gradientn(
       colours = rev(brewer.pal(n = 11, name = "RdBu")),
@@ -108,7 +104,7 @@ for (i in seq_along(reductions)) {
     pbmc_2,
     reduction = reductions[i],
     features = c("signature1"),
-    pt.size = pt.size
+    pt.size = pt_sizes[[chip]]
   ) +
     scale_colour_gradientn(
       colours = rev(brewer.pal(n = 11, name = "RdBu")),
@@ -134,7 +130,7 @@ for (i in seq_along(reductions)) {
     pbmc_2,
     reduction = reductions[i],
     features = c("signature1"),
-    pt.size = pt.size
+    pt.size = pt_sizes[[chip]]
   ) +
     scale_colour_gradientn(colours = rev(brewer.pal(n = 11, name = "RdBu"))) +
     ggtitle(reductions[i]) & NoAxes()

@@ -7,6 +7,7 @@ import subprocess
 from enum import Enum
 from flytekit import workflow
 from latch import large_task
+from latch.resources.launch_plan import LaunchPlan
 from latch.types import LatchDir, LatchFile
 from pathlib import Path
 
@@ -49,11 +50,9 @@ def runModule(
 @workflow
 def coExpression_wf(
     chip: Chip,
-    output_dir: LatchDir = "latch:///analysis_data/module-score_demo",
-    project: str = "demo",
-    archrObj: LatchDir = LatchDir(
-        "latch:///ArchRProjects/module-score_demo"
-    ),
+    output_dir: LatchDir,
+    project: str,
+    archrObj: LatchDir,
     geneList: LatchFile = "latch://13502.account/sample_fqs/geneList.csv"
 ) -> LatchDir:
     """
@@ -116,6 +115,18 @@ def coExpression_wf(
         geneList=geneList
     )
 
+
+LaunchPlan(
+    coExpression_wf,
+    "module-score_demo",
+    {
+        "chip": Chip.typeI,
+        "archrObj": LatchDir("latch:///ArchRProjects/module-score_demo"),
+        "project": "module-score_demo",
+        "geneList": "latch://13502.account/sample_fqs/geneList.csv",
+        "output_dir": LatchDir("latch:///analysis_data/module-score_demo")
+    }
+)
 
 if __name__ == "__main__":
 

@@ -2,6 +2,7 @@
 """
 
 import glob
+import logging
 import subprocess
 
 from enum import Enum
@@ -10,6 +11,11 @@ from latch import large_task
 from latch.resources.launch_plan import LaunchPlan
 from latch.types import LatchDir, LatchFile
 from pathlib import Path
+
+
+logging.basicConfig(
+    format="%(levelname)s - %(asctime)s - %(message)s", level=logging.INFO
+)
 
 
 class Chip(Enum):
@@ -27,12 +33,19 @@ def runModule(
     geneList: LatchFile
 ) -> LatchDir:
 
+    # Move ArchRProj folder to ~; ensures path consistent with BPCells object
+    logging.info("Moving ArchRProject to /root/...")
+    proj_name = archrObj.remote_path.split("/")[-1]
+    new_path = f"/root/{proj_name}/"
+    subprocess.run(["mv", archrObj.local_path, new_path])
+
+    logging.info("Running module score script...")
     subprocess.run(
         [
             "Rscript",
             "/root/wf/runModuleScore.R",
             chip.value,
-            archrObj.local_path,
+            new_path,
             project,
             geneList.local_path
         ]

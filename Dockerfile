@@ -63,20 +63,22 @@ RUN apt-get update -y && apt-get install -y default-jdk
 RUN R CMD javareconf
 
 # Installation of R packages with renv
-RUN R -e "install.packages('https://cran.r-project.org/src/contrib/renv_1.0.7.tar.gz', repos = NULL, type = 'source')"
+RUN R -e "install.packages('https://cran.r-project.org/src/contrib/Archive/renv/renv_1.0.5.tar.gz', repos = NULL, type = 'source')"
 COPY renv.lock /root/renv.lock
-COPY .Rprofile /root/.Rprofile
 RUN mkdir /root/renv
 COPY renv/activate.R /root/renv/activate.R
-COPY renv/settings.json /root/renv/settings.json
-RUN R -e "options(repos = c(CRAN = 'https://cloud.r-project.org')); renv::restore()"
-
-RUN python3 -m pip install numpy==1.26.2
-RUN python3 -m pip install macs2==2.2.6
+RUN R -e "renv::restore()"
 
 # Copy files for .renvignore
 COPY coExpression_wf.Rproj /root/coExpression_wf.Rproj
 COPY .renvignore /root/.renvignore
+
+# Install BPCells into renv path
+RUN R -e ".libPaths(c('/root/renv/library/R-4.3/x86_64-pc-linux-gnu')); \
+            remotes::install_github('bnprks/BPCells/r', ref = 'a3096e5', upgrade = 'never')"
+
+RUN python3 -m pip install numpy==1.26.2
+RUN python3 -m pip install macs2==2.2.6
 
 # STOP HERE:
 # The following lines are needed to ensure your build environement works

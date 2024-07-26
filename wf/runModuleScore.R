@@ -33,7 +33,7 @@ combined
 reductions <- names(combined@reductions)
 all_genes <- rownames(combined)
 
-pt_sizes <- list("50x50" = 2.0, "96x96" = 1.0, "220x220" = 0.5)
+pt_sizes <- list("50x50" = 2.0, "96x96" = 1.0, "220x220" = 0.25)
 
 print(paste("Chip selected:", chip))
 print(paste("Figure point size:", pt_sizes[[chip]]))
